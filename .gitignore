@@ -1,0 +1,96 @@
+
+# ==========================================
+# LotTrackingWpf - Git Ignore
+# .NET 8 | WPF | Visual Studio 2022 | MySQL
+# ==========================================
+
+# Visual Studio user-specific files
+.vs/
+*.suo
+*.user
+*.userosscache
+*.sln.docstates
+*.rsuser
+
+# Build outputs
+[Bb]in/
+[Oo]bj/
+[Dd]ebug/
+[Rr]elease/
+x64/
+x86/
+artifacts/
+
+# Compiled binaries
+*.dll
+*.exe
+*.pdb
+*.cache
+*.ilk
+*.obj
+
+# Visual Studio temporary files
+*.tmp
+*.temp
+*.log
+*.tlog
+*.lastbuildstate
+*.VC.db
+*.VC.opendb
+
+# NuGet generated packages
+*.nupkg
+*.snupkg
+packages/
+.nuget/
+
+# Test results
+TestResults/
+coverage/
+coverage.xml
+*.coverage
+*.coveragexml
+
+# ReSharper / Rider
+_ReSharper*/
+*.DotSettings.user
+.idea/
+
+# VS Code settings
+.vscode/
+
+# Operating system files
+.DS_Store
+Thumbs.db
+Desktop.ini
+
+# Local application configuration
+appsettings.json
+appsettings.*.local.json
+appsettings.Development.json
+
+# Environment variables and secrets
+.env
+.env.*
+!.env.example
+secrets.json
+*.pfx
+*.p12
+*.key
+
+# Local databases and backups
+*.db
+*.sqlite
+*.sqlite3
+*.bak
+*.sql.bak
+
+# Generated output and exports
+publish/
+PublishProfiles/
+*.publishsettings
+
+# Temporary project files
+*.orig
+*.rej
+*~

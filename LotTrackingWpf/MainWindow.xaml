@@ -1,0 +1,603 @@
+<Window x:Class="LotTrackingWpf.MainWindow"
+        xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
+        xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+        xmlns:converters="clr-namespace:LotTrackingWpf.Converters"
+        Title="Lot Tracking • Factory Control"
+        Width="1280"
+        Height="820"
+        MinWidth="950"
+        MinHeight="650"
+        Background="#F3F6FA">
+
+    <Window.Resources>
+        <converters:FifoWaferSelectionConverter
+            x:Key="FifoSelection"/>
+
+        <converters:PlantProgressConverter
+            x:Key="PlantProgress"/>
+    </Window.Resources>
+
+    <DockPanel>
+
+        <!-- Header -->
+        <Border DockPanel.Dock="Top"
+                Background="#16283F"
+                Padding="20,14">
+            <DockPanel>
+                <StackPanel DockPanel.Dock="Right"
+                            Orientation="Horizontal"
+                            VerticalAlignment="Center">
+                    <TextBlock x:Name="UserLabel"
+                               Foreground="White"
+                               VerticalAlignment="Center"
+                               Margin="0,0,12,0"/>
+
+                    <Button Content="Logout"
+                            Click="Logout_Click"
+                            Padding="14,8"/>
+                </StackPanel>
+
+                <StackPanel>
+                    <TextBlock Text="LOT TRACKING  |  Factory Control"
+                               FontSize="25"
+                               FontWeight="Bold"
+                               Foreground="White"/>
+
+                    <TextBlock Text="10-station wafer processing • MySQL persistence"
+                               Foreground="#C3D3E4"/>
+                </StackPanel>
+            </DockPanel>
+        </Border>
+
+        <!-- Footer -->
+        <Border DockPanel.Dock="Bottom"
+                Background="White"
+                Padding="10">
+            <DockPanel>
+                <Button DockPanel.Dock="Right"
+                        Content="Refresh now"
+                        Command="{Binding RefreshCommand}"
+                        Padding="12,6"/>
+
+                <TextBlock Text="{Binding Summary}"
+                           VerticalAlignment="Center"
+                           FontWeight="SemiBold"/>
+            </DockPanel>
+        </Border>
+
+        <TabControl Margin="14" FontSize="14">
+
+            <!-- Dashboard -->
+            <TabItem Header="Dashboard">
+                <DockPanel Margin="16">
+                    <StackPanel DockPanel.Dock="Top">
+                        <TextBlock Text="System Overview"
+                                   FontSize="23"
+                                   FontWeight="Bold"/>
+
+                        <TextBlock Text="{Binding Summary}"
+                                   FontSize="16"
+                                   Margin="0,12"/>
+
+                        <TextBlock Text="Plant occupancy"
+                                   FontSize="18"
+                                   FontWeight="SemiBold"
+                                   Margin="0,10"/>
+                    </StackPanel>
+
+                    <DataGrid ItemsSource="{Binding Plants}"
+                              IsReadOnly="True"
+                              AutoGenerateColumns="True"/>
+                </DockPanel>
+            </TabItem>
+
+            <!-- Suppliers -->
+            <TabItem Header="Suppliers">
+                <DockPanel Margin="12">
+                    <StackPanel DockPanel.Dock="Top">
+                        <WrapPanel Margin="0,0,0,8">
+                            <TextBlock Text="Name"
+                                       VerticalAlignment="Center"/>
+
+                            <TextBox Width="170"
+                                     Margin="5"
+                                     Text="{Binding SupplierName}"/>
+
+                            <TextBlock Text="Email"
+                                       VerticalAlignment="Center"/>
+
+                            <TextBox Width="200"
+                                     Margin="5"
+                                     Text="{Binding SupplierEmail}"/>
+
+                            <TextBlock Text="Location"
+                                       VerticalAlignment="Center"/>
+
+                            <TextBox Width="170"
+                                     Margin="5"
+                                     Text="{Binding SupplierLocation}"/>
+                        </WrapPanel>
+
+                        <WrapPanel Margin="0,0,0,8">
+                            <Button Content="Create"
+                                    Command="{Binding AddSupplierCommand}"
+                                    Padding="12,8"/>
+
+                            <Button Content="Update selected"
+                                    Command="{Binding UpdateSupplierCommand}"
+                                    Padding="12,8"/>
+
+                            <Button Content="Delete selected"
+                                    Command="{Binding DeleteSupplierCommand}"
+                                    Padding="12,8"/>
+                        </WrapPanel>
+                    </StackPanel>
+
+                    <DataGrid ItemsSource="{Binding Suppliers}"
+                              SelectedItem="{Binding SelectedSupplier}"
+                              IsReadOnly="True"/>
+                </DockPanel>
+            </TabItem>
+
+            <!-- Wafers -->
+            <TabItem Header="Wafers">
+                <DockPanel Margin="12">
+                    <StackPanel DockPanel.Dock="Top">
+                        <WrapPanel Margin="0,0,0,8">
+                            <TextBlock Text="Code"
+                                       VerticalAlignment="Center"/>
+
+                            <TextBox Width="170"
+                                     Margin="5"
+                                     Text="{Binding WaferCode}"/>
+
+                            <TextBlock Text="Type"
+                                       VerticalAlignment="Center"/>
+
+                            <TextBox Width="160"
+                                     Margin="5"
+                                     Text="{Binding WaferType}"/>
+
+                            <TextBlock Text="Supplier"
+                                       VerticalAlignment="Center"/>
+
+                            <ComboBox Width="200"
+                                      Margin="5"
+                                      ItemsSource="{Binding Suppliers}"
+                                      SelectedItem="{Binding WaferSupplier}"
+                                      DisplayMemberPath="SupplierName"/>
+                        </WrapPanel>
+
+                        <WrapPanel Margin="0,0,0,8">
+                            <Button Content="Create one"
+                                    Command="{Binding AddWaferCommand}"
+                                    Padding="12,8"/>
+
+                            <Button Content="Update selected"
+                                    Command="{Binding UpdateWaferCommand}"
+                                    Padding="12,8"/>
+
+                            <Button Content="Delete selected"
+                                    Command="{Binding DeleteWaferCommand}"
+                                    Padding="12,8"/>
+
+                            <TextBlock Text="Bulk count"
+                                       Margin="12,0,5,0"
+                                       VerticalAlignment="Center"/>
+
+                            <TextBox Width="70"
+                                     Margin="5"
+                                     Text="{Binding BulkCount}"/>
+
+                            <Button Content="Generate bulk wafers"
+                                    Command="{Binding BulkWaferCommand}"
+                                    Background="#D8F4E3"
+                                    Padding="12,8"/>
+                        </WrapPanel>
+                    </StackPanel>
+
+                    <DataGrid ItemsSource="{Binding Wafers}"
+                              SelectedItem="{Binding SelectedWafer}"
+                              IsReadOnly="True"/>
+                </DockPanel>
+            </TabItem>
+
+            <!-- Lots -->
+            <TabItem Header="Lots">
+                <DockPanel Margin="12">
+                    <StackPanel DockPanel.Dock="Top">
+                        <WrapPanel Margin="0,0,0,8">
+                            <TextBlock Text="Lot code"
+                                       VerticalAlignment="Center"/>
+
+                            <TextBox Width="180"
+                                     Margin="5"
+                                     Text="{Binding LotCode}"/>
+
+                            <Button Content="Create lot"
+                                    Command="{Binding AddLotCommand}"
+                                    Padding="12,8"/>
+
+                            <Button Content="Update selected"
+                                    Command="{Binding UpdateLotCommand}"
+                                    Padding="12,8"/>
+
+                            <Button Content="Delete selected"
+                                    Command="{Binding DeleteLotCommand}"
+                                    Padding="12,8"/>
+                        </WrapPanel>
+                    </StackPanel>
+
+                    <DataGrid ItemsSource="{Binding Lots}"
+                              SelectedItem="{Binding SelectedLot}"
+                              IsReadOnly="True"/>
+                </DockPanel>
+            </TabItem>
+
+            <!-- Assign Wafers -->
+            <TabItem Header="Assign Wafers">
+                <Grid Margin="16">
+                    <Grid.RowDefinitions>
+                        <RowDefinition Height="Auto"/>
+                        <RowDefinition Height="Auto"/>
+                        <RowDefinition Height="*"/>
+                    </Grid.RowDefinitions>
+
+                    <Border Grid.Row="0"
+                            Background="White"
+                            Padding="16"
+                            Margin="0,0,0,12">
+                        <StackPanel>
+                            <TextBlock Text="Assign Wafers to Lot"
+                                       FontSize="22"
+                                       FontWeight="Bold"
+                                       Margin="0,0,0,12"/>
+
+                            <TextBlock Text="Select Lot"
+                                       FontWeight="SemiBold"/>
+
+                            <ComboBox ItemsSource="{Binding AssignableLots}"
+                                      SelectedItem="{Binding AssignmentLot, Mode=TwoWay}"
+                                      DisplayMemberPath="LotCode"
+                                      Width="280"
+                                      HorizontalAlignment="Left"
+                                      Margin="0,5,0,12"/>
+
+                            <TextBlock Text="Selected Wafer IDs"
+                                       FontWeight="SemiBold"/>
+
+                            <TextBox Text="{Binding WaferIds, UpdateSourceTrigger=PropertyChanged}"
+                                     MinHeight="45"
+                                     Margin="0,5,0,8"
+                                     AcceptsReturn="True"
+                                     TextWrapping="Wrap"/>
+
+                            <TextBlock Text="FIFO assignment: select wafers in ascending wafer-number order. Maximum 24 per lot."
+                                       Foreground="#64748B"
+                                       TextWrapping="Wrap"
+                                       Margin="0,0,0,12"/>
+
+                            <WrapPanel>
+                                <Button Content="Assign Selected Wafers"
+                                        Command="{Binding AssignCommand}"
+                                        Background="#2563EB"
+                                        Foreground="White"
+                                        Padding="16,10"
+                                        MinWidth="200"/>
+
+                                <Button Content="Clear Selection"
+                                        Click="ClearWaferSelection_Click"
+                                        Margin="8,0,0,0"
+                                        Padding="16,10"/>
+                            </WrapPanel>
+                        </StackPanel>
+                    </Border>
+
+                    <TextBlock Grid.Row="1"
+                               Text="Wafer Inventory"
+                               FontSize="18"
+                               FontWeight="SemiBold"
+                               Margin="0,0,0,10"/>
+
+                    <DataGrid Grid.Row="2"
+                              ItemsSource="{Binding Wafers}"
+                              AutoGenerateColumns="False"
+                              IsReadOnly="True"
+                              CanUserAddRows="False"
+                              RowHeight="38"
+                              HorizontalScrollBarVisibility="Auto">
+
+                        <DataGrid.Columns>
+                            <DataGridTextColumn Header="ID"
+                                                Binding="{Binding Id}"
+                                                Width="70"/>
+
+                            <DataGridTextColumn Header="Wafer Code"
+                                                Binding="{Binding WaferCode}"
+                                                Width="*"
+                                                MinWidth="130"/>
+
+                            <DataGridTextColumn Header="Type"
+                                                Binding="{Binding WaferType}"
+                                                Width="120"/>
+
+                            <DataGridTextColumn Header="Supplier"
+                                                Binding="{Binding SupplierName}"
+                                                Width="*"
+                                                MinWidth="140"/>
+
+                            <DataGridTextColumn Header="Status"
+                                                Binding="{Binding Status}"
+                                                Width="150"/>
+
+                            <DataGridTextColumn Header="Lot ID"
+                                                Binding="{Binding LotId}"
+                                                Width="90"/>
+
+                            <DataGridTemplateColumn Header="Action"
+                                                    Width="120">
+                                <DataGridTemplateColumn.CellTemplate>
+                                    <DataTemplate>
+                                        <Button Content="Select"
+                                                Tag="{Binding Id}"
+                                                Click="SelectWafer_Click"
+                                                Padding="10,5"
+                                                Background="#D8F4E3"
+                                                HorizontalAlignment="Center">
+
+                                            <Button.IsEnabled>
+                                                <MultiBinding Converter="{StaticResource FifoSelection}">
+                                                    <Binding Path="."/>
+
+                                                    <Binding Path="DataContext"
+                                                             RelativeSource="{RelativeSource AncestorType=Window}"/>
+
+                                                    <Binding Path="DataContext.WaferIds"
+                                                             RelativeSource="{RelativeSource AncestorType=Window}"/>
+
+                                                    <Binding Path="DataContext.Wafers.Count"
+                                                             RelativeSource="{RelativeSource AncestorType=Window}"/>
+
+                                                    <Binding Path="DataContext.AssignmentLot"
+                                                             RelativeSource="{RelativeSource AncestorType=Window}"/>
+                                                </MultiBinding>
+                                            </Button.IsEnabled>
+                                        </Button>
+                                    </DataTemplate>
+                                </DataGridTemplateColumn.CellTemplate>
+                            </DataGridTemplateColumn>
+                        </DataGrid.Columns>
+                    </DataGrid>
+                </Grid>
+            </TabItem>
+
+            <!-- Plant Monitor -->
+            <TabItem Header="Plant Monitor">
+                <Grid Margin="12">
+
+                    <Grid.RowDefinitions>
+                        <RowDefinition Height="Auto"/>
+                        <RowDefinition Height="2*"/>
+                        <RowDefinition Height="Auto"/>
+                        <RowDefinition Height="*"/>
+                    </Grid.RowDefinitions>
+
+                    <!-- Existing plant controls -->
+                    <StackPanel Grid.Row="0">
+                        <TextBlock Text="10 plants • one lot per plant"
+                                   FontWeight="SemiBold"
+                                   Margin="0,0,0,10"/>
+
+                        <WrapPanel Margin="0,0,0,10">
+                            <TextBlock Text="Plant time (ms)"
+                                       VerticalAlignment="Center"/>
+
+                            <TextBox Width="120"
+                                     Margin="5"
+                                     Text="{Binding PlantTimeMs}"/>
+
+                            <Button Content="Update selected plant"
+                                    Command="{Binding SetPlantTimeCommand}"
+                                    Padding="12,8"/>
+                        </WrapPanel>
+                    </StackPanel>
+
+                    <!-- Updated plant table with individual progress -->
+                    <DataGrid Grid.Row="1"
+                              ItemsSource="{Binding Plants}"
+                              SelectedItem="{Binding SelectedPlant}"
+                              AutoGenerateColumns="False"
+                              IsReadOnly="True"
+                              CanUserAddRows="False"
+                              RowHeight="38"
+                              Margin="0,0,0,12">
+
+                        <DataGrid.Columns>
+
+                            <DataGridTextColumn Header="Plant Number"
+                                                Binding="{Binding PlantNumber}"
+                                                Width="110"/>
+
+                            <DataGridTextColumn Header="Plant Name"
+                                                Binding="{Binding PlantName}"
+                                                Width="130"/>
+
+                            <DataGridTextColumn Header="Processing Time (ms)"
+                                                Binding="{Binding BaseProcessingTimeMs}"
+                                                Width="170"/>
+
+                            <DataGridCheckBoxColumn Header="Occupied"
+                                                    Binding="{Binding Occupied}"
+                                                    Width="100"/>
+
+                            <DataGridTextColumn Header="Current Lot ID"
+                                                Binding="{Binding CurrentLotId}"
+                                                Width="120"/>
+
+                            <DataGridTextColumn Header="Current Lot Code"
+                                                Binding="{Binding CurrentLotCode}"
+                                                Width="140"/>
+
+                            <!-- New individual plant progress column -->
+                            <DataGridTemplateColumn Header="Plant Progress"
+                                                    Width="*"
+                                                    MinWidth="230">
+
+                                <DataGridTemplateColumn.CellTemplate>
+                                    <DataTemplate>
+                                        <Grid Margin="8,4">
+
+                                            <Grid.ColumnDefinitions>
+                                                <ColumnDefinition Width="*"/>
+                                                <ColumnDefinition Width="65"/>
+                                            </Grid.ColumnDefinitions>
+
+                                            <!-- Green progress bar -->
+                                            <ProgressBar Grid.Column="0"
+                                                         Height="18"
+                                                         Minimum="0"
+                                                         Maximum="100"
+                                                         Foreground="#16A34A"
+                                                         Background="#E5E7EB"
+                                                         Value="{Binding ProcessingProgress}"/>
+
+                                            <!-- Percentage label -->
+                                            <TextBlock Grid.Column="1"
+                                                       Text="{Binding ProcessingProgress, StringFormat={}{0:0}%}"
+                                                       HorizontalAlignment="Right"
+                                                       VerticalAlignment="Center"
+                                                       FontWeight="SemiBold"
+                                                       Foreground="#15803D"/>
+
+                                        </Grid>
+                                    </DataTemplate>
+                                </DataGridTemplateColumn.CellTemplate>
+                            </DataGridTemplateColumn>
+
+                        </DataGrid.Columns>
+                    </DataGrid>
+
+                    <!-- Existing lot progress section -->
+                    <TextBlock Grid.Row="2"
+                               Text="Lot Processing Progress"
+                               FontSize="18"
+                               FontWeight="SemiBold"
+                               Margin="0,8,0,10"/>
+
+                    <DataGrid Grid.Row="3"
+                              ItemsSource="{Binding Lots}"
+                              AutoGenerateColumns="False"
+                              IsReadOnly="True"
+                              CanUserAddRows="False"
+                              RowHeight="42">
+
+                        <DataGrid.Columns>
+                            <DataGridTextColumn Header="Lot"
+                                                Binding="{Binding LotCode}"
+                                                Width="130"/>
+
+                            <DataGridTextColumn Header="Status"
+                                                Binding="{Binding Status}"
+                                                Width="190"/>
+
+                            <DataGridTextColumn Header="Current Plant"
+                                                Binding="{Binding CurrentPlantNumber}"
+                                                Width="130"/>
+
+                            <DataGridTemplateColumn Header="Progress"
+                                                    Width="*"
+                                                    MinWidth="230">
+
+                                <DataGridTemplateColumn.CellTemplate>
+                                    <DataTemplate>
+                                        <Grid Margin="8,4">
+
+                                            <Grid.ColumnDefinitions>
+                                                <ColumnDefinition Width="*"/>
+                                                <ColumnDefinition Width="65"/>
+                                            </Grid.ColumnDefinitions>
+
+                                            <ProgressBar Grid.Column="0"
+                                                         Height="18"
+                                                         Minimum="0"
+                                                         Maximum="100"
+                                                         Foreground="#16A34A"
+                                                         Background="#E5E7EB">
+                                                <ProgressBar.Value>
+                                                    <MultiBinding Converter="{StaticResource PlantProgress}">
+                                                        <Binding Path="CurrentPlantNumber"/>
+                                                        <Binding Path="Status"/>
+                                                    </MultiBinding>
+                                                </ProgressBar.Value>
+                                            </ProgressBar>
+
+                                            <TextBlock Grid.Column="1"
+                                                       HorizontalAlignment="Right"
+                                                       VerticalAlignment="Center"
+                                                       FontWeight="SemiBold"
+                                                       Foreground="#15803D">
+
+                                                <TextBlock.Text>
+                                                    <MultiBinding Converter="{StaticResource PlantProgress}"
+                                                                  StringFormat="{}{0}%">
+                                                        <Binding Path="CurrentPlantNumber"/>
+                                                        <Binding Path="Status"/>
+                                                    </MultiBinding>
+                                                </TextBlock.Text>
+
+                                            </TextBlock>
+
+                                        </Grid>
+                                    </DataTemplate>
+                                </DataGridTemplateColumn.CellTemplate>
+                            </DataGridTemplateColumn>
+
+                        </DataGrid.Columns>
+                    </DataGrid>
+
+                </Grid>
+            </TabItem>
+
+            <!-- Processing -->
+            <TabItem Header="Processing">
+                <DockPanel Margin="12">
+                    <StackPanel DockPanel.Dock="Top">
+                        <TextBlock Text="Select a ready lot to start processing."
+                                   FontSize="18"
+                                   FontWeight="SemiBold"
+                                   Margin="0,0,0,12"/>
+
+                        <ComboBox ItemsSource="{Binding Lots}"
+                                  SelectedItem="{Binding SelectedLot}"
+                                  DisplayMemberPath="LotCode"
+                                  Width="280"
+                                  HorizontalAlignment="Left"
+                                  Margin="0,0,0,8"/>
+
+                        <TextBlock Text="{Binding SelectedLot.Status}"
+                                   Margin="0,0,0,12"/>
+
+                        <Button Content="Start selected lot processing"
+                                Command="{Binding StartCommand}"
+                                Width="260"
+                                HorizontalAlignment="Left"
+                                Padding="12,10"
+                                Margin="0,0,0,12"/>
+                    </StackPanel>
+
+                    <DataGrid ItemsSource="{Binding Lots}"
+                              SelectedItem="{Binding SelectedLot}"
+                              IsReadOnly="True"/>
+                </DockPanel>
+            </TabItem>
+
+            <!-- Logs -->
+            <TabItem Header="Logs">
+                <DataGrid Margin="12"
+                          ItemsSource="{Binding Logs}"
+                          IsReadOnly="True"/>
+            </TabItem>
+
+        </TabControl>
+    </DockPanel>
+</Window>
