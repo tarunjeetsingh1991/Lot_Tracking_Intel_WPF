@@ -94,3 +94,16 @@ PublishProfiles/
 *.orig
 *.rej
 *~
+
+# Unit test output
+**/bin/
+**/obj/
+**/TestResults/
+
+# Code coverage reports
+CoverageReport/
+**/coverage.cobertura.xml
+**/coverage.opencover.xml
+
+# Visual Studio
+.vs/
